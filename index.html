@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<title>NAS100 Smart Trader — Practice</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#152238;--muted:#aab8cb;--green:#19b889;--red:#ff7979}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#fff;font:16px system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:720px;margin:auto;padding:18px 14px 40px}
+header{display:flex;align-items:center;gap:12px;margin:6px 0 18px}.logo{background:var(--green);color:#071b17;border-radius:14px;padding:12px;font-weight:900;font-size:22px}
+h1{font-size:20px;margin:0}small,.muted{color:var(--muted)}.sub{font-size:11px;letter-spacing:1px}
+.card{background:var(--panel);padding:16px;border-radius:16px;margin:12px 0}
+.balance{font-size:30px;font-weight:800;margin:5px 0 8px;overflow-wrap:anywhere}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#0b1220;border-radius:12px;padding:12px}
+nav{display:flex;gap:8px;margin:14px 0;position:sticky;top:0;background:var(--bg);padding:5px 0;z-index:2}
+button,.tab{font:inherit;border:0;border-radius:11px;padding:12px;background:#23344c;color:#fff;cursor:pointer}
+.tab{flex:1;font-size:13px}.tab.active,button.primary{background:var(--green);color:#071b17;font-weight:700}
+button{width:100%;margin:4px 0}.outline{background:transparent;border:1px solid #53637a;color:#fff}
+label{display:block;color:var(--muted);font-size:13px;margin:9px 0 5px}
+input,textarea,select{width:100%;padding:12px;border-radius:10px;border:1px solid #465872;background:#0b1220;color:#fff;font:inherit}
+.row{display:flex;gap:10px}.row>*{flex:1}.hidden{display:none!important}
+.notice{border-left:3px solid var(--green);padding:10px 12px;background:#102c2a;border-radius:8px;color:#c8f6e8;font-size:13px}
+.danger{border-left-color:#ffb0a8;background:#35252a;color:#f3d5d5}
+.trade{border-bottom:1px solid #34445a;padding:12px 0}.pnl{font-weight:800}.green{color:var(--green)}.red{color:var(--red)}
+footer{text-align:center;color:var(--muted);font-size:11px;margin-top:22px}
+</style>
+</head>
+<body><main>
+<header><div class="logo">↗</div><div><h1>NAS100 Smart Trader</h1><div class="sub muted">PERSONAL PRACTICE WORKSPACE</div></div></header>
+<div class="card">
+ <small>Virtual portfolio balance · USD</small><div class="balance" id="balance">$1,000.00</div>
+ <small>Practice only · Not connected to Deriv or any broker</small>
+</div>
+<div class="grid">
+ <div class="stat"><small>Recorded trades</small><div class="balance" style="font-size:24px" id="count">0</div></div>
+ <div class="stat"><small>Simulated P/L</small><div class="balance green" style="font-size:24px" id="pnl">$0.00</div></div>
+</div>
+<nav><button class="tab active" data-tab="dashboard">Dashboard</button><button class="tab" data-tab="journal">Trade log</button><button class="tab" data-tab="risk">Risk tools</button></nav>
+<section id="dashboard">
+ <div class="card"><h3>Market workspace</h3><div class="row"><div><b>NAS100</b><br><small>Chart not connected</small></div><div style="text-align:right"><small>STATUS</small><br><b>OFFLINE</b></div></div><hr style="border-color:#34445a">
+ <h4>Before a practice trade</h4>
+ <p>□ Identify trend direction</p><p>□ Wait for candle-close confirmation</p><p>□ Define stop-loss and target</p><p>□ Check that risk is within your limit</p>
+ <div class="notice">This app does not generate guaranteed signals. Use it to practise and record decisions, not to risk money.</div>
+ </div><button class="primary" onclick="showTab('journal');document.getElementById('tradeForm').classList.remove('hidden')">＋ Record a practice trade</button>
+</section>
+<section id="journal" class="hidden">
+ <div class="card"><h3>Practice trade journal</h3><p class="muted">Enter a hypothetical trade that has already closed. Profit/loss below is per one price unit only; it does not represent broker P/L or contract sizing.</p>
+ <div id="tradeForm">
+ <label>Direction</label><select id="direction"><option>BUY</option><option>SELL</option></select>
+ <div class="row"><div><label>Entry price</label><input id="entry" type="number" step="any" placeholder="e.g. 25000"></div><div><label>Exit price</label><input id="exit" type="number" step="any" placeholder="e.g. 25010"></div></div>
+ <div class="row"><div><label>Stop-loss price</label><input id="stop" type="number" step="any" placeholder="Stop"></div><div><label>Target price</label><input id="target" type="number" step="any" placeholder="Target"></div></div>
+ <label>Notes (optional)</label><textarea id="notes" rows="2" placeholder="Why did you take this setup?"></textarea>
+ <button class="primary" id="saveTrade">Save closed practice trade</button>
+ </div><div id="tradeList"></div><button class="outline" id="clearTrades">Clear practice history</button>
+ </div>
+</section>
+<section id="risk" class="hidden">
+ <div class="card"><h3>Risk budget calculator</h3><label>Hypothetical account size (USD)</label><input id="account" type="number" min="0" value="1000">
+ <label>Risk budget per practice setup: <b id="riskLabel">1%</b></label><input id="risk" type="range" min="0.5" max="2" step="0.5" value="1">
+ <div class="stat"><small>Hypothetical risk budget</small><div class="balance" id="riskAmount">$10.00</div></div>
+ <p class="muted">This is not a lot-size calculation. Real contract sizing depends on the broker's instrument specifications, stop distance, and account currency.</p>
+ <div class="notice danger">Do not use borrowed money or money needed for food, transport, school, or shelter. Never increase risk to recover losses.</div>
+ </div>
+</section>
+<footer>NAS100 SMART TRADER · Prototype 0.1 · Simulator only</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);let trades=[];let base=1000, pnl=0;
+function showTab(name){document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));$(name).classList.remove('hidden');document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===name))}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+function render(){ $('balance').textContent='$'+(base+pnl).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});$('count').textContent=trades.length;$('pnl').textContent=(pnl>=0?'+$':'-$')+Math.abs(pnl).toFixed(2);$('pnl').className='balance '+(pnl>=0?'green':'red');
+$('tradeList').innerHTML=trades.map((t,i)=>`<div class="trade"><b>#${i+1} · ${t.dir} NAS100</b><span class="pnl ${t.pnl>=0?'green':'red'}" style="float:right">${t.pnl>=0?'+':'−'}${Math.abs(t.pnl).toFixed(2)} points</span><br><small>Entry ${t.entry} · Exit ${t.exit} · SL ${t.stop} · TP ${t.target}</small>${t.notes?`<p class="muted">${escapeHtml(t.notes)}</p>`:''}</div>`).join('')}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('saveTrade').addEventListener('click',()=>{let dir=$('direction').value,e=Number($('entry').value),x=Number($('exit').value),s=Number($('stop').value),t=Number($('target').value);
+if(![$('entry').value,$('exit').value,$('stop').value,$('target').value].every(v=>v.trim()!=='')||![e,x,s,t].every(Number.isFinite)||[e,x,s,t].some(v=>v<=0)||(dir==='BUY'?(s>=e||t<=e):(s<=e||t>=e))){alert('Please enter valid positive prices. BUY: stop < entry < target. SELL: target < entry < stop.');return}
+let result=dir==='BUY'?x-e:e-x;trades.unshift({dir,entry:e,exit:x,stop:s,target:t,notes:$('notes').value.trim(),pnl:result});pnl+=result;$('entry').value=$('exit').value=$('stop').value=$('target').value=$('notes').value='';render();});
+$('clearTrades').addEventListener('click',()=>{if(confirm('Clear all practice trades and reset the simulated balance?')){trades=[];pnl=0;render()}});
+function riskCalc(){let a=Math.max(0,Number($('account').value)||0),r=Number($('risk').value);$('riskLabel').textContent=r+'%';$('riskAmount').textContent='$'+(a*r/100).toFixed(2)}
+$('account').addEventListener('input',riskCalc);$('risk').addEventListener('input',riskCalc);render();riskCalc();
+</script>
+</body></html>
